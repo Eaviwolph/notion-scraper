@@ -1,10 +1,10 @@
 import { Client } from "@notionhq/client"
+import { Course } from "./courses"
 
 export interface Student {
     id: string
     name: string
 }
-
 
 export async function getStudents(notion: Client): Promise<Student[]> {
     if (process.env.NOTION_DATABASE_ID_STUDENTS === undefined) {
