@@ -1,0 +1,19 @@
+{
+  "name": "notion-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Eavi Wolph",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn ts-node ./index.ts"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.5",
+    "@types/node": "^20.1.7",
+    "dotenv": "^16.0.3",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  }
+}
