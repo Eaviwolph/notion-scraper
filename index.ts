@@ -1,3 +1,4 @@
+import { getCourses } from "./src/courses";
 import { getLearnings } from "./src/learnings"
 import { getStudents } from "./src/students"
 import { Client } from "@notionhq/client"
@@ -13,6 +14,8 @@ async function getAllAndPopulate() {
         fs.writeFileSync('students.json', JSON.stringify(students, null, 2))
         let learnings = await getLearnings(notion, students)
         fs.writeFileSync('learnings.json', JSON.stringify(learnings, null, 2))
+        let courses = await getCourses(notion, learnings)
+        fs.writeFileSync('courses.json', JSON.stringify(courses, null, 2))
     } catch (error) {
         console.error(error)
     }
