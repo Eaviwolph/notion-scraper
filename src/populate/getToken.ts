@@ -10,6 +10,6 @@ export async function getToken(): Promise<string> {
         }),
     });
     let data = await response.json();
-    console.log(data);
+
     return data.token;
 }

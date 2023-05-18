@@ -49,7 +49,7 @@ export async function postStudents(token: string, students: Users[]) {
         if (json._id !== undefined) {
             students[i]._id = json._id;
         } else {
-            console.log(json);
+            console.log("Students", json);
         }
     }
 }
@@ -91,6 +91,8 @@ export async function postTeachers(token: string, teachers: Users[]) {
         let json = await response.json();
         if (json._id !== undefined) {
             teachers[i]._id = json._id;
+        } else {
+            console.log("Teachers", json);
         }
     }
 }

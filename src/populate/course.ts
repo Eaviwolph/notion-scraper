@@ -1,7 +1,7 @@
 import { Course } from "../models/courses";
 import { Users } from "../models/users";
 
-export async function postCourses(token: string, courses: Course[], students: Users[]) {
+export async function postCourses(token: string, courses: Course[], students: Users[], teachers: Users[]) {
     let allStudentsIDs = students.map((student) => {
         return student._id;
     });
@@ -25,6 +25,14 @@ export async function postCourses(token: string, courses: Course[], students: Us
             continue;
         }
 
+        let teachersLinked = teachers
+            .filter((teacher) => {
+                return courses[i].teacherNames.includes(teacher.name);
+            })
+            .map((teacher) => {
+                return teacher._id;
+            });
+
         let obj = {
             "name": courses[i].name,
             "semester": courses[i].semester,
@@ -32,6 +40,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
                 return learning._id;
             }),
             "students": allStudentsIDs,
+            "teachers": teachersLinked,
         };
 
         let response = await fetch('http://localhost:8080/courses', {
@@ -46,7 +55,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
         if (json._id !== undefined) {
             courses[i]._id = json._id;
         } else {
-            console.log(json);
+            console.log("Courses", courses[i].name, json);
         }
     }
 }

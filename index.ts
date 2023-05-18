@@ -71,7 +71,7 @@ async function populateWithData() {
     await postLearnings(token, learnings);
     fs.writeFileSync('~dev/afterLearnings.json', JSON.stringify(learnings, null, 2));
 
-    await postCourses(token, courses, students);
+    await postCourses(token, courses, students, teachers);
     fs.writeFileSync('~dev/afterCourses.json', JSON.stringify(courses, null, 2));
 
     await postCompetences(token, competences);

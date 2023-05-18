@@ -25,9 +25,6 @@ export async function postLearnings(token: string, learnings: Learning[]) {
             "description": learnings[i].description,
             "example": learnings[i].example,
             "isCritical": learnings[i].critical,
-            // "studentsValidating": learnings[i].studentsValidating.map((student) => {
-            //     return student._id;
-            // }),
         };
         let response = await fetch('http://localhost:8080/learnings', {
             method: 'POST',
@@ -41,7 +38,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
         if (json._id !== undefined) {
             learnings[i]._id = json._id;
         } else {
-            console.log(json);
+            console.log("Learnings", json);
         }
     }
 }

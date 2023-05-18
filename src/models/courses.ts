@@ -9,6 +9,7 @@ export interface Course {
     name: string;
     semester: string,
     learnings: Learning[];
+    teacherNames: String[];
 }
 
 export async function getCourses(notion: Client, learnings: Learning[]): Promise<Course[]> {
@@ -28,6 +29,12 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
         let semester = "";
         if (result.properties.Semestre.select) {
             semester = result.properties.Semestre.select.name;
+            if (semester === "S8 TC") {
+                semester = "S8";
+            }
+            if (semester === "S9 TC") {
+                semester = "S9";
+            }
         }
 
         let learningsList: Learning[] = [];
@@ -38,11 +45,24 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
                 });
             });
         }
+
+        let teacherNames: String[] = [];
+        if (result.properties["Enseignant"].multi_select.length > 0) {
+            teacherNames = result.properties["Enseignant"].multi_select.map((teacher: any) => {
+                let noAccents = teacher.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                let firstName = noAccents.split(" ")[0];
+                let lastName = noAccents.split(" ")[1].toLowerCase();
+                lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+                return firstName + " " + lastName;
+            });
+        }
         let course: Course = {
             id: result.id.replace(/-/g, ""),
             name: name.trim(),
             semester: semester,
-            learnings: learningsList
+            learnings: learningsList,
+            teacherNames: teacherNames
         };
         courses.push(course);
     });

@@ -71,7 +71,7 @@ export async function postProofs(token: string, proofs: Proof[], teachers: Users
             proofs[i]._id = json._id;
             validateProof(token, proofs[i]);
         } else {
-            console.log(json);
+            console.log("Proofs", json);
         }
     }
 }
