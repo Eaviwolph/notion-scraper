@@ -1,7 +1,7 @@
 import { Client } from "@notionhq/client";
 import { Learning } from "./learnings";
 import * as fs from 'fs';
-import { Student } from "./students";
+import { Users } from "./users";
 
 export interface Course {
     _id?: string;
@@ -49,19 +49,19 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
     return courses;
 }
 
-export function getMeanByCourse(courses: Course[], students: Student[]) {
+export function getMeanByCourse(courses: Course[], students: Users[]) {
     let meanByCourse: any = {};
     courses.forEach((course: Course) => {
         if (course.semester !== "S8") {
             return;
         }
         meanByCourse[course.name] = {};
-        students.forEach((student: Student) => {
+        students.forEach((student: Users) => {
             let mean = 0;
             let count = 0;
             course.learnings.forEach((learning: Learning) => {
                 if (learning.critical) {
-                    if (learning.studentsValidating.find((s: Student) => s.id === student.id)) {
+                    if (learning.studentsValidating.find((s: Users) => s.id === student.id)) {
                         mean += 1;
                     }
                     count += 1;

@@ -1,6 +1,6 @@
-import { Student } from "../models/students";
+import { Users } from "../models/users";
 
-export async function postStudents(token: string, students: Student[]) {
+export async function postStudents(token: string, students: Users[]) {
     let dbStudents = await fetch('http://localhost:8080/students', {
         method: 'GET',
         headers: {
@@ -29,44 +29,68 @@ export async function postStudents(token: string, students: Student[]) {
             students[i]._id = jsonDbStudent._id;
             continue;
         }
-        let response: any;
-        if (students[i].isStudent) {
-            response = await fetch('http://localhost:8080/students', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    "firstName": students[i].name.split(" ")[0],
-                    "lastName": students[i].name.split(" ")[1],
-                    "email": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
-                    "password": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase(),
-                    "promo": "2024",
-                    "major": "ICE",
-                }),
-            });
-        } else {
-            response = await fetch('http://localhost:8080/teachers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    "firstName": students[i].name.split(" ")[0],
-                    "lastName": students[i].name.split(" ")[1],
-                    "email": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
-                    "password": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase(),
-                }),
-            });
-        }
+        let response = await fetch('http://localhost:8080/students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                "firstName": students[i].name.split(" ")[0],
+                "lastName": students[i].name.split(" ")[1],
+                "email": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
+                "password": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase(),
+                "promo": "2024",
+                "major": "ICE",
+            }),
+        });
 
         let json = await response.json();
         if (json._id !== undefined) {
             students[i]._id = json._id;
         } else {
             console.log(json);
+        }
+    }
+}
+
+export async function postTeachers(token: string, teachers: Users[]) {
+    let dbTeachers = await fetch('http://localhost:8080/teachers', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`
+        },
+    });
+    let jsonDbTeachers = await dbTeachers.json();
+
+    for (let i = 0; i < teachers.length; i++) {
+        let jsonDbTeacher = jsonDbTeachers.find((dbTeacher: any) => {
+            return dbTeacher.firstName === teachers[i].name.split(" ")[0] && dbTeacher.lastName === teachers[i].name.split(" ")[1];
+        });
+        if (jsonDbTeacher !== undefined) {
+            console.log(`Teacher '${teachers[i].name}' already exists in db`);
+            teachers[i]._id = jsonDbTeacher._id;
+            continue;
+        }
+        let response = await fetch('http://localhost:8080/teachers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                "firstName": teachers[i].name.split(" ")[0],
+                "lastName": teachers[i].name.split(" ")[1],
+                "email": teachers[i].name.split(" ")[0].toLowerCase() + "." + teachers[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
+                "password": teachers[i].name.split(" ")[0].toLowerCase() + "." + teachers[i].name.split(" ")[1].toLowerCase() + "38",
+                "isAdmin": (teachers[i].name === "Michel Sasson" || teachers[i].name === "Helene Ouyang"),
+            }),
+        });
+
+        let json = await response.json();
+        if (json._id !== undefined) {
+            teachers[i]._id = json._id;
         }
     }
 }

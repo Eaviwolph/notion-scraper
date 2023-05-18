@@ -1,5 +1,5 @@
 import { Client } from "@notionhq/client";
-import { Student } from "./students";
+import { Users } from "./users";
 import * as fs from 'fs';
 import { Learning } from "./learnings";
 
@@ -8,11 +8,11 @@ export interface Proof {
     id: string;
     learningID: string;
     learnings: Learning[];
-    students: Student[];
+    students: Users[];
     validatedBy: string;
 }
 
-export async function getProofs(notion: Client, students: Student[]): Promise<Proof[]> {
+export async function getProofs(notion: Client, students: Users[]): Promise<Proof[]> {
     if (process.env.NOTION_DATABASE_ID_PROOFS === undefined) {
         throw new Error("NOTION_DATABASE_ID_PROOFS is undefined");
     }
@@ -22,10 +22,10 @@ export async function getProofs(notion: Client, students: Student[]): Promise<Pr
     fs.writeFileSync('~dev/rawProofs.json', JSON.stringify(results, null, 2));
     let proofs: Proof[] = [];
     results.results.forEach((result: any) => {
-        let studentsList: Student[] = [];
+        let studentsList: Users[] = [];
         if (result.properties["👤 Élèves concernés"].relation.length > 0) {
             studentsList = result.properties["👤 Élèves concernés"].relation.map((relation: any) => {
-                return students.find((student: Student) => {
+                return students.find((student: Users) => {
                     return student.id === relation.id.replace(/-/g, "");
                 });
             });

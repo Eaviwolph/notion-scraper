@@ -1,5 +1,5 @@
 import { Client } from "@notionhq/client";
-import { Student } from "./students";
+import { Users } from "./users";
 import * as fs from 'fs';
 import { Proof } from "./proofs";
 
@@ -10,11 +10,13 @@ export interface Learning {
     critical: boolean;
     description: string;
     example: string;
-    studentsValidating: Student[];
+    studentsValidating: Users[];
     proofsIds: string[];
+    validableBy: string[];
+    competence: string;
 }
 
-export async function getLearnings(notion: Client): Promise<Learning[]> {
+export async function getLearnings(notion: Client, teachers: Users[]): Promise<Learning[]> {
     if (process.env.NOTION_DATABASE_ID_LEARNINGS === undefined) {
         throw new Error("NOTION_DATABASE_ID_LEARNINGS is undefined");
     }
@@ -40,6 +42,31 @@ export async function getLearnings(notion: Client): Promise<Learning[]> {
         if (result.properties.Name.title.length > 0) {
             name = result.properties.Name.title[0].text.content;
         }
+        let competence = "";
+        if (result.properties["Compétence"].select) {
+            competence = result.properties["Compétence"].select.name;
+        }
+
+        let validableBy: string[] = [];
+        if (result.properties["Validable par"].multi_select.length > 0) {
+            validableBy = result.properties["Validable par"].multi_select.map((select: any) => {
+                let noAccents = select.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                let firstName = noAccents.split(" ")[0];
+                let lastName = noAccents.split(" ")[1].toLowerCase();
+                lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+                return firstName + " " + lastName;
+            });
+        }
+        for (let i = 0; i < validableBy.length; i++) {
+            if (teachers.find((teacher: Users) => teacher.name === validableBy[i]) === undefined) {
+                teachers.push({
+                    id: "",
+                    name: validableBy[i],
+                    isStudent: false
+                });
+            }
+        }
 
         let proofsIds: string[] = [];
         if (result.properties["🖌️ Preuves"].relation.length > 0) {
@@ -55,7 +82,9 @@ export async function getLearnings(notion: Client): Promise<Learning[]> {
             description: description.trim(),
             example: example.trim(),
             studentsValidating: [],
-            proofsIds: proofsIds
+            proofsIds: proofsIds,
+            validableBy: validableBy,
+            competence: competence
         };
         learnings.push(learning);
     });
@@ -68,7 +97,7 @@ export function populateWithProofs(learnings: Learning[], proofs: Proof[]) {
         for (let j = 0; j < proofs.length; j++) {
             if (proofs[j].learningID === learnings[i].id) {
                 for (let k = 0; k < proofs[j].students.length; k++) {
-                    if (!learnings[i].studentsValidating.find((s: Student) => s.id === proofs[j].students[k].id)) {
+                    if (!learnings[i].studentsValidating.find((s: Users) => s.id === proofs[j].students[k].id)) {
                         learnings[i].studentsValidating.push(proofs[j].students[k]);
                     }
                 }

@@ -1,8 +1,7 @@
 import { Proof } from "../models/proofs";
-import { Student } from "../models/students";
+import { Users } from "../models/users";
 
 const heleneID = "0b2977b623aa448ba811c1ab31d7ba5b";
-const michelID = "f58a4417ba3e4653b87aadf15238fd38";
 
 export async function validateProof(token: string, proof: Proof) {
     let response = await fetch('http://localhost:8080/proofs/validate', {
@@ -21,16 +20,16 @@ export async function validateProof(token: string, proof: Proof) {
     }
 }
 
-export async function postProofs(token: string, proofs: Proof[], students: Student[]) {
-    let Michel = students.find((student) => {
-        return student.name === "Michel Sasson";
+export async function postProofs(token: string, proofs: Proof[], teachers: Users[]) {
+    let Michel = teachers.find((teacher) => {
+        return teacher.name === "Michel Sasson";
     });
     if (Michel === undefined) {
         console.log("Michel not found");
         return;
     }
-    let Helene = students.find((student) => {
-        return student.name === "Helene Ouyang";
+    let Helene = teachers.find((teacher) => {
+        return teacher.name === "Helene Ouyang";
     });
     if (Helene === undefined) {
         console.log("Helene not found");

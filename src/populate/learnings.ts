@@ -1,6 +1,4 @@
 import { Learning } from "../models/learnings";
-import { Student } from "../models/students";
-import * as fs from "fs";
 
 export async function postLearnings(token: string, learnings: Learning[]) {
     let response = await fetch('http://localhost:8080/learnings', {

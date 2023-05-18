@@ -1,10 +1,8 @@
 import { Course } from "../models/courses";
-import { Student } from "../models/students";
+import { Users } from "../models/users";
 
-export async function postCourses(token: string, courses: Course[], students: Student[]) {
-    let allStudentsIDs = students.filter((student) => {
-        return student.isStudent === true;
-    }).map((student) => {
+export async function postCourses(token: string, courses: Course[], students: Users[]) {
+    let allStudentsIDs = students.map((student) => {
         return student._id;
     });
 
