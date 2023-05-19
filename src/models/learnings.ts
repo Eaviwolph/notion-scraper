@@ -14,6 +14,7 @@ export interface Learning {
     proofsIds: string[];
     validableBy: string[];
     competence: string;
+    teachers: Users[];
 }
 
 export async function getLearnings(notion: Client, teachers: Users[]): Promise<Learning[]> {
@@ -58,6 +59,8 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
                 return firstName + " " + lastName;
             });
         }
+
+        let validableByUsers: Users[] = [];
         for (let i = 0; i < validableBy.length; i++) {
             if (teachers.find((teacher: Users) => teacher.name === validableBy[i]) === undefined) {
                 teachers.push({
@@ -65,6 +68,11 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
                     name: validableBy[i],
                     isStudent: false
                 });
+            }
+
+            let teacher = teachers.find((teacher: Users) => teacher.name === validableBy[i]);
+            if (teacher !== undefined) {
+                validableByUsers.push(teacher);
             }
         }
 
@@ -84,7 +92,8 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
             studentsValidating: [],
             proofsIds: proofsIds,
             validableBy: validableBy,
-            competence: competence
+            competence: competence,
+            teachers: validableByUsers
         };
         learnings.push(learning);
     });

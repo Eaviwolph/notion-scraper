@@ -61,24 +61,34 @@ async function populateWithData() {
     let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
 
     let token = await getToken();
+    console.log("Token retrieved");
 
     await postStudents(token, students);
     fs.writeFileSync('~dev/afterStudents.json', JSON.stringify(students, null, 2));
+    console.log("Students posted");
 
     await postTeachers(token, teachers);
     fs.writeFileSync('~dev/afterTeachers.json', JSON.stringify(teachers, null, 2));
+    console.log("Teachers posted");
 
     await postLearnings(token, learnings);
     fs.writeFileSync('~dev/afterLearnings.json', JSON.stringify(learnings, null, 2));
+    console.log("Learnings posted");
 
     await postCourses(token, courses, students, teachers);
     fs.writeFileSync('~dev/afterCourses.json', JSON.stringify(courses, null, 2));
+    console.log("Courses posted");
 
     await postCompetences(token, competences);
     fs.writeFileSync('~dev/afterCompetences.json', JSON.stringify(competences, null, 2));
+    console.log("Competences posted");
 
     await postProofs(token, proofs, teachers);
     fs.writeFileSync('~dev/afterProofs.json', JSON.stringify(proofs, null, 2));
+    console.log("Proofs posted");
 };
 
+if (!fs.existsSync('~dev')) {
+    fs.mkdirSync('~dev');
+}
 populateWithData();

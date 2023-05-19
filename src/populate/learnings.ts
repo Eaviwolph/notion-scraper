@@ -26,6 +26,9 @@ export async function postLearnings(token: string, learnings: Learning[]) {
             "description": learnings[i].description,
             "example": learnings[i].example,
             "isCritical": learnings[i].critical,
+            "teachers": learnings[i].teachers.map((teacher) => {
+                return teacher._id;
+            }),
         };
         let response = await fetch('http://localhost:8080/learnings', {
             method: 'POST',
