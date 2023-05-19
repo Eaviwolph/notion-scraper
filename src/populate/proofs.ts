@@ -1,5 +1,6 @@
 import { Proof } from "../models/proofs";
 import { Users } from "../models/users";
+import fetch from "node-fetch";
 
 const heleneID = "0b2977b623aa448ba811c1ab31d7ba5b";
 
@@ -66,7 +67,7 @@ export async function postProofs(token: string, proofs: Proof[], teachers: Users
             },
             body: JSON.stringify(obj),
         });
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             proofs[i]._id = json._id;
             validateProof(token, proofs[i]);

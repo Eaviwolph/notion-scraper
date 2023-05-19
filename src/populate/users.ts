@@ -1,4 +1,5 @@
 import { Users } from "../models/users";
+import fetch from "node-fetch";
 
 export async function postStudents(token: string, students: Users[]) {
     let dbStudents = await fetch('http://localhost:8080/students', {
@@ -8,7 +9,7 @@ export async function postStudents(token: string, students: Users[]) {
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonDbStudents = await dbStudents.json();
+    let jsonDbStudents: any = await dbStudents.json();
 
     let dbTeachers = await fetch('http://localhost:8080/teachers', {
         method: 'GET',
@@ -17,7 +18,7 @@ export async function postStudents(token: string, students: Users[]) {
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonDbTeachers = await dbTeachers.json();
+    let jsonDbTeachers: any = await dbTeachers.json();
     jsonDbStudents = jsonDbStudents.concat(jsonDbTeachers);
 
     for (let i = 0; i < students.length; i++) {
@@ -45,7 +46,7 @@ export async function postStudents(token: string, students: Users[]) {
             }),
         });
 
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             students[i]._id = json._id;
         } else {
@@ -62,7 +63,7 @@ export async function postTeachers(token: string, teachers: Users[]) {
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonDbTeachers = await dbTeachers.json();
+    let jsonDbTeachers: any = await dbTeachers.json();
 
     for (let i = 0; i < teachers.length; i++) {
         let jsonDbTeacher = jsonDbTeachers.find((dbTeacher: any) => {
@@ -88,7 +89,7 @@ export async function postTeachers(token: string, teachers: Users[]) {
             }),
         });
 
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             teachers[i]._id = json._id;
         } else {

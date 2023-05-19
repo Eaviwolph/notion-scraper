@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 export async function getToken(): Promise<string> {
     let response = await fetch('http://localhost:8080/sign-in', {
         method: 'POST',
@@ -9,7 +11,7 @@ export async function getToken(): Promise<string> {
             "password": "admin",
         }),
     });
-    let data = await response.json();
+    let data: any = await response.json();
 
     return data.token;
 }

@@ -1,4 +1,5 @@
 import { Competence } from "../models/competences";
+import fetch from "node-fetch";
 
 export async function postCompetences(token: string, competence: Competence[]) {
     let response = await fetch('http://localhost:8080/competences', {
@@ -8,7 +9,7 @@ export async function postCompetences(token: string, competence: Competence[]) {
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonDbCompetences = await response.json();
+    let jsonDbCompetences: any = await response.json();
 
     for (let i = 0; i < competence.length; i++) {
         let jsonDbCompetence = jsonDbCompetences.find((dbCompetence: any) => {
@@ -34,7 +35,7 @@ export async function postCompetences(token: string, competence: Competence[]) {
             },
             body: JSON.stringify(obj),
         });
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             competence[i]._id = json._id;
         } else {

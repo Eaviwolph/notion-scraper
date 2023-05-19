@@ -1,4 +1,5 @@
 import { Learning } from "../models/learnings";
+import fetch from "node-fetch";
 
 export async function postLearnings(token: string, learnings: Learning[]) {
     let response = await fetch('http://localhost:8080/learnings', {
@@ -8,7 +9,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonLearnings = await response.json();
+    let jsonLearnings: any = await response.json();
 
     for (let i = 0; i < learnings.length; i++) {
         let jsonDbLearning = jsonLearnings.find((dbLearning: any) => {
@@ -34,7 +35,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
             },
             body: JSON.stringify(obj),
         });
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             learnings[i]._id = json._id;
         } else {

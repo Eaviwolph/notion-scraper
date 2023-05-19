@@ -1,5 +1,6 @@
 import { Course } from "../models/courses";
 import { Users } from "../models/users";
+import fetch from "node-fetch";
 
 export async function postCourses(token: string, courses: Course[], students: Users[], teachers: Users[]) {
     let allStudentsIDs = students.map((student) => {
@@ -13,7 +14,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
             'authorization': `Bearer ${token}`
         },
     });
-    let jsonCourses = await response.json();
+    let jsonCourses: any = await response.json();
 
     for (let i = 0; i < courses.length; i++) {
         let jsonDbCourse = jsonCourses.find((dbCourse: any) => {
@@ -51,7 +52,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
             },
             body: JSON.stringify(obj),
         });
-        let json = await response.json();
+        let json: any = await response.json();
         if (json._id !== undefined) {
             courses[i]._id = json._id;
         } else {
