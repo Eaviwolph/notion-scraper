@@ -66,7 +66,7 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
         }
         let course: Course = {
             id: result.id.replace(/-/g, ""),
-            name: name.trim(),
+            name: name.trim().replace("’", "'"),
             icon: icon,
             semester: semester,
             learnings: learningsList,
