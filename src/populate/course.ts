@@ -36,6 +36,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
 
         let obj = {
             "name": courses[i].name,
+            "icon": courses[i].icon,
             "semester": courses[i].semester,
             "learnings": courses[i].learnings.map((learning) => {
                 return learning._id;

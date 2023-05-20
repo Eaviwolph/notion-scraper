@@ -6,6 +6,7 @@ import { Proof } from "./proofs";
 export interface Learning {
     _id?: string;
     id: string;
+    icon: string;
     name: string;
     critical: boolean;
     description: string;
@@ -43,6 +44,11 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
         if (result.properties.Name.title.length > 0) {
             name = result.properties.Name.title[0].text.content;
         }
+        let icon = "";
+        if (result.icon && result.icon.type === "emoji") {
+            icon = result.icon.emoji;
+        }
+
         let competence = "";
         if (result.properties["Compétence"].select) {
             competence = result.properties["Compétence"].select.name;
@@ -86,6 +92,7 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
         let learning: Learning = {
             id: result.id.replace(/-/g, ""),
             name: name.trim(),
+            icon: icon,
             critical: critical,
             description: description.trim(),
             example: example.trim(),

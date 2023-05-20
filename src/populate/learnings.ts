@@ -23,6 +23,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
 
         let obj = {
             "name": learnings[i].name,
+            icon: learnings[i].icon,
             "description": learnings[i].description,
             "example": learnings[i].example,
             "isCritical": learnings[i].critical,

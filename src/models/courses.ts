@@ -6,6 +6,7 @@ import { Users } from "./users";
 export interface Course {
     _id?: string;
     id: string;
+    icon: string;
     name: string;
     semester: string,
     learnings: Learning[];
@@ -26,6 +27,12 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
         if (result.properties.Name.title.length > 0) {
             name = result.properties.Name.title[0].text.content;
         }
+
+        let icon = "";
+        if (result.icon && result.icon.type === "emoji") {
+            icon = result.icon.emoji;
+        }
+
         let semester = "";
         if (result.properties.Semestre.select) {
             semester = result.properties.Semestre.select.name;
@@ -60,6 +67,7 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
         let course: Course = {
             id: result.id.replace(/-/g, ""),
             name: name.trim(),
+            icon: icon,
             semester: semester,
             learnings: learningsList,
             teacherNames: teacherNames
