@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 const heleneID = "0b2977b623aa448ba811c1ab31d7ba5b";
 
 export async function validateProof(token: string, proof: Proof) {
-    let response = await fetch('http://localhost:8080/proofs/validate', {
+    let response = await fetch('http://localhost:8080/proofs/state', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -13,11 +13,14 @@ export async function validateProof(token: string, proof: Proof) {
         },
         body: JSON.stringify({
             "_id": proof._id,
+            "state": "VALIDATED",
         }),
     });
 
     if (response.status !== 200) {
         console.log(`Error validating proof ${proof._id}`);
+        let json: any = await response.json();
+        console.log(json);
     }
 }
 
@@ -73,6 +76,7 @@ export async function postProofs(token: string, proofs: Proof[], teachers: Users
             validateProof(token, proofs[i]);
         } else {
             console.log("Proofs", json);
+            console.log("Proofs", obj);
         }
     }
 }
