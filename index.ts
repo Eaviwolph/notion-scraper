@@ -60,7 +60,7 @@ async function getAllAndPopulate(): Promise<{ students: Users[], teachers: Users
 async function populateWithData() {
     let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
 
-    let token = await getToken();
+    let token = await getToken("admin.admin", "admin");
     console.log("Token retrieved");
 
     await postStudents(token, students);

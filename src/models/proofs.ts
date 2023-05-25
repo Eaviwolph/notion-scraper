@@ -10,6 +10,7 @@ export interface Proof {
     learnings: Learning[];
     students: Users[];
     validatedBy: string;
+    firstChat: string;
 }
 
 export async function getProofs(notion: Client, students: Users[]): Promise<Proof[]> {
@@ -35,12 +36,20 @@ export async function getProofs(notion: Client, students: Users[]): Promise<Proo
             validatedBy = result.properties["Évalué par"].people[0].id.replace(/-/g, "");
         }
 
+        let firstChat = "";
+        if (result.properties.Info.rich_text.length > 0) {
+            result.properties.Info.rich_text.forEach((text: any) => {
+                firstChat += text.text.content;
+            });
+        }
+
         let proof: Proof = {
             id: result.id.replace(/-/g, ""),
             learningID: result.properties["🎓 Compétence"].relation[0].id.replace(/-/g, ""),
             students: studentsList,
             learnings: [],
-            validatedBy: validatedBy
+            validatedBy: validatedBy,
+            firstChat: firstChat
         };
         proofs.push(proof);
     });

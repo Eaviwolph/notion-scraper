@@ -44,6 +44,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
             learnings[i]._id = json._id;
         } else {
             console.log("Learnings", json);
+            console.log(obj);
         }
     }
 }
