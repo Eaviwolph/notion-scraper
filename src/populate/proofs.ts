@@ -49,6 +49,36 @@ export async function postChat(token: string, proof: Proof) {
     }
 }
 
+export async function postProof(token: string, proof: Proof, validatedBy: Users) {
+    for (let j = 0; j < proof.students.length; j++) {
+        let obj = {
+            "learnings": proof.learnings.map((learning) => {
+                return learning._id;
+            }),
+            "student": proof.students[0]._id,
+            "validatedBy": validatedBy._id,
+        };
+
+        let response = await fetch('http://localhost:8080/proofs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(obj),
+        });
+        let json: any = await response.json();
+        if (json._id !== undefined) {
+            proof._id = json._id;
+            await postChat(token, proof);
+            validateProof(token, proof);
+        } else {
+            console.log("Proofs", json);
+            console.log("Proofs", obj);
+        }
+    }
+}
+
 export async function postProofs(token: string, proofs: Proof[], teachers: Users[]) {
     let Michel = teachers.find((teacher) => {
         return teacher.name === "Michel Sasson";
@@ -66,43 +96,11 @@ export async function postProofs(token: string, proofs: Proof[], teachers: Users
     }
 
     for (let i = 0; i < proofs.length; i++) {
-        let members: (string | undefined)[] = [];
-        if (proofs[i].students.length > 1) {
-            members = proofs[i].students.splice(1).map((student) => {
-                return student._id;
-            });
-        }
-
         let validatedBy = Michel;
         if (proofs[i].validatedBy === heleneID) {
             validatedBy = Helene;
         }
 
-        let obj = {
-            "learnings": proofs[i].learnings.map((learning) => {
-                return learning._id;
-            }),
-            "lead": proofs[i].students[0]._id,
-            "members": members,
-            "teachers": [validatedBy._id],
-        };
-
-        let response = await fetch('http://localhost:8080/proofs', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(obj),
-        });
-        let json: any = await response.json();
-        if (json._id !== undefined) {
-            proofs[i]._id = json._id;
-            await postChat(token, proofs[i]);
-            validateProof(token, proofs[i]);
-        } else {
-            console.log("Proofs", json);
-            console.log("Proofs", obj);
-        }
+        postProof(token, proofs[i], validatedBy);
     }
 }
