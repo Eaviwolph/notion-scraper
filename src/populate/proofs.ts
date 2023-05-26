@@ -36,7 +36,7 @@ export async function postChat(token: string, proof: Proof, student: Users) {
             'authorization': `Bearer ${studentToken}`
         },
         body: JSON.stringify({
-            "proofs_id": proof._id,
+            "proof_id": proof._id,
             "text": proof.firstChat,
         }),
     });
