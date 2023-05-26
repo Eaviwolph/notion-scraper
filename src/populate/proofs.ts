@@ -25,10 +25,10 @@ export async function validateProof(token: string, proof: Proof) {
     }
 }
 
-export async function postChat(token: string, proof: Proof) {
+export async function postChat(token: string, proof: Proof, student: Users) {
     let studentToken = await getToken(
-        proof.students[0].name.split(" ")[0].toLowerCase() + "." + proof.students[0].name.split(" ")[1].toLowerCase() + "@epita.fr",
-        proof.students[0].name.split(" ")[0].toLowerCase() + "." + proof.students[0].name.split(" ")[1].toLowerCase());
+        student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase() + "@epita.fr",
+        student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase());
     let response = await fetch('http://localhost:8080/chats', {
         method: 'POST',
         headers: {
@@ -43,7 +43,6 @@ export async function postChat(token: string, proof: Proof) {
 
     if (response.status !== 200) {
         console.log(`Error posting chat on proof ${proof._id}`);
-        console.log(proof);
         let json: any = await response.json();
         console.log(json);
     }
@@ -55,7 +54,7 @@ export async function postProof(token: string, proof: Proof, validatedBy: Users)
             "learnings": proof.learnings.map((learning) => {
                 return learning._id;
             }),
-            "student": proof.students[0]._id,
+            "student": proof.students[j]._id,
             "validatedBy": validatedBy._id,
         };
 
@@ -70,11 +69,10 @@ export async function postProof(token: string, proof: Proof, validatedBy: Users)
         let json: any = await response.json();
         if (json._id !== undefined) {
             proof._id = json._id;
-            await postChat(token, proof);
+            await postChat(token, proof, proof.students[j]);
             validateProof(token, proof);
         } else {
             console.log("Proofs", json);
-            console.log("Proofs", obj);
         }
     }
 }
@@ -101,6 +99,6 @@ export async function postProofs(token: string, proofs: Proof[], teachers: Users
             validatedBy = Helene;
         }
 
-        postProof(token, proofs[i], validatedBy);
+        await postProof(token, proofs[i], validatedBy);
     }
 }

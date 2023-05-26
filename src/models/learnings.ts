@@ -30,7 +30,9 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
     learningsResults.results.forEach((result: any) => {
         let example = "";
         if (result.properties.Exemple.rich_text.length > 0) {
-            example = result.properties.Exemple.rich_text[0].text.content;
+            for (let i = 0; i < result.properties.Exemple.rich_text.length; i++) {
+                example += result.properties.Exemple.rich_text[i].text.content;
+            }
         }
         let critical = false;
         if (result.properties["Criticité"].select) {
@@ -38,11 +40,15 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
         }
         let description = "";
         if (result.properties.Description.rich_text.length > 0) {
-            description = result.properties.Description.rich_text[0].text.content;
+            for (let i = 0; i < result.properties.Description.rich_text.length; i++) {
+                description += result.properties.Description.rich_text[i].text.content;
+            }
         }
         let name = "";
         if (result.properties.Name.title.length > 0) {
-            name = result.properties.Name.title[0].text.content;
+            for (let i = 0; i < result.properties.Name.title.length; i++) {
+                name += result.properties.Name.title[i].text.content;
+            }
         }
         let icon = "";
         if (result.icon && result.icon.type === "emoji") {
