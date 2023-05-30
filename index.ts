@@ -91,6 +91,4 @@ async function populateWithData() {
 if (!fs.existsSync('~dev')) {
     fs.mkdirSync('~dev');
 }
-// populateWithData();
-
-getAllAndPopulate();
+populateWithData();
