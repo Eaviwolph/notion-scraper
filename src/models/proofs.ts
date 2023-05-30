@@ -17,12 +17,23 @@ export async function getProofs(notion: Client, students: Users[]): Promise<Proo
     if (process.env.NOTION_DATABASE_ID_PROOFS === undefined) {
         throw new Error("NOTION_DATABASE_ID_PROOFS is undefined");
     }
-    const results = await notion.databases.query({
-        database_id: process.env.NOTION_DATABASE_ID_PROOFS,
-    });
-    fs.writeFileSync('~dev/rawProofs.json', JSON.stringify(results, null, 2));
+    let cursor = undefined;
+    let resultsAll: any[] = [];
+    while (true) {
+        const { results, next_cursor } = await notion.databases.query({
+            database_id: process.env.NOTION_DATABASE_ID_PROOFS,
+            start_cursor: cursor,
+        });
+        resultsAll = resultsAll.concat(results);
+        if (!next_cursor) {
+            break;
+        }
+        cursor = next_cursor;
+    }
+    fs.writeFileSync('~dev/rawProofs.json', JSON.stringify(resultsAll, null, 2));
+
     let proofs: Proof[] = [];
-    results.results.forEach((result: any) => {
+    resultsAll.forEach((result: any) => {
         let studentsList: Users[] = [];
         if (result.properties["👤 Élèves concernés"].relation.length > 0) {
             studentsList = result.properties["👤 Élèves concernés"].relation.map((relation: any) => {

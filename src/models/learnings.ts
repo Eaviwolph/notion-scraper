@@ -22,12 +22,23 @@ export async function getLearnings(notion: Client, teachers: Users[]): Promise<L
     if (process.env.NOTION_DATABASE_ID_LEARNINGS === undefined) {
         throw new Error("NOTION_DATABASE_ID_LEARNINGS is undefined");
     }
-    const learningsResults = await notion.databases.query({
-        database_id: process.env.NOTION_DATABASE_ID_LEARNINGS,
-    });
-    fs.writeFileSync('~dev/rawLearnings.json', JSON.stringify(learningsResults, null, 2));
+    let cursor = undefined;
+    let resultsAll: any[] = [];
+    while (true) {
+        const { results, next_cursor } = await notion.databases.query({
+            database_id: process.env.NOTION_DATABASE_ID_LEARNINGS,
+            start_cursor: cursor,
+        });
+        resultsAll = resultsAll.concat(results);
+        if (!next_cursor) {
+            break;
+        }
+        cursor = next_cursor;
+    }
+    fs.writeFileSync('~dev/rawLearnings.json', JSON.stringify(resultsAll, null, 2));
+
     let learnings: Learning[] = [];
-    learningsResults.results.forEach((result: any) => {
+    resultsAll.forEach((result: any) => {
         let example = "";
         if (result.properties.Exemple.rich_text.length > 0) {
             for (let i = 0; i < result.properties.Exemple.rich_text.length; i++) {
