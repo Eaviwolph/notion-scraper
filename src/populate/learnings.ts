@@ -2,7 +2,7 @@ import { Learning } from "../models/learnings";
 import fetch from "node-fetch";
 
 export async function postLearnings(token: string, learnings: Learning[]) {
-    let response = await fetch('http://localhost:8080/learnings', {
+    let response = await fetch(`${process.env.API_HOST}/learnings`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export async function postLearnings(token: string, learnings: Learning[]) {
                 return teacher._id;
             }),
         };
-        let response = await fetch('http://localhost:8080/learnings', {
+        let response = await fetch(`${process.env.API_HOST}/learnings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

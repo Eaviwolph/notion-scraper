@@ -6,7 +6,7 @@ import { getToken } from "./getToken";
 const heleneID = "0b2977b623aa448ba811c1ab31d7ba5b";
 
 export async function validateProof(token: string, proof: Proof) {
-    let response = await fetch('http://localhost:8080/proofs/state', {
+    let response = await fetch(`${process.env.API_HOST}/proofs/state`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function postChat(token: string, proof: Proof, student: Users) {
     let studentToken = await getToken(
         student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase() + "@epita.fr",
         student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase());
-    let response = await fetch('http://localhost:8080/chats', {
+    let response = await fetch(`${process.env.API_HOST}/chats`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export async function postChat(token: string, proof: Proof, student: Users) {
     });
 
     if (response.status !== 200) {
-        console.log(`Error posting chat on proof ${proof._id}`);
+        console.log(`Error posting chat on proof ${proof.id}`);
         let json: any = await response.json();
         console.log(json);
     }
@@ -58,7 +58,7 @@ export async function postProof(token: string, proof: Proof, validatedBy: Users)
             "validatedBy": validatedBy._id,
         };
 
-        let response = await fetch('http://localhost:8080/proofs', {
+        let response = await fetch(`${process.env.API_HOST}/proofs`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

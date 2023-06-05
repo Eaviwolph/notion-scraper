@@ -7,7 +7,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
         return student._id;
     });
 
-    let response = await fetch('http://localhost:8080/courses', {
+    let response = await fetch(`${process.env.API_HOST}/courses`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export async function postCourses(token: string, courses: Course[], students: Us
             "teachers": teachersLinked,
         };
 
-        let response = await fetch('http://localhost:8080/courses', {
+        let response = await fetch(`${process.env.API_HOST}/courses`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

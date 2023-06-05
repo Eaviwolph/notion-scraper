@@ -2,7 +2,7 @@ import { Competence } from "../models/competences";
 import fetch from "node-fetch";
 
 export async function postCompetences(token: string, competence: Competence[]) {
-    let response = await fetch('http://localhost:8080/competences', {
+    let response = await fetch(`${process.env.API_HOST}/competences`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export async function postCompetences(token: string, competence: Competence[]) {
                 return learning._id;
             }),
         };
-        let response = await fetch('http://localhost:8080/competences', {
+        let response = await fetch(`${process.env.API_HOST}/competences`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

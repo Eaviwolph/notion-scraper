@@ -2,7 +2,7 @@ import { Users } from "../models/users";
 import fetch from "node-fetch";
 
 export async function postStudents(token: string, students: Users[]) {
-    let dbStudents = await fetch('http://localhost:8080/students', {
+    let dbStudents = await fetch(`${process.env.API_HOST}/students`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export async function postStudents(token: string, students: Users[]) {
     });
     let jsonDbStudents: any = await dbStudents.json();
 
-    let dbTeachers = await fetch('http://localhost:8080/teachers', {
+    let dbTeachers = await fetch(`${process.env.API_HOST}/teachers`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export async function postStudents(token: string, students: Users[]) {
             students[i]._id = jsonDbStudent._id;
             continue;
         }
-        let response = await fetch('http://localhost:8080/students', {
+        let response = await fetch(`${process.env.API_HOST}/students`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export async function postStudents(token: string, students: Users[]) {
 }
 
 export async function postTeachers(token: string, teachers: Users[]) {
-    let dbTeachers = await fetch('http://localhost:8080/teachers', {
+    let dbTeachers = await fetch(`${process.env.API_HOST}/teachers`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
