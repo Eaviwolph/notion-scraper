@@ -1,7 +1,6 @@
 import { Course } from "../models/courses";
 import { Learning } from "../models/learnings";
 import { Users } from "../models/users";
-import { CourseAnalytics } from "./courses";
 import { UeAnalytics } from "./ue";
 
 export type StudentAnalytics = {
@@ -100,13 +99,19 @@ export function getMean(students: StudentAnalytics[]): string {
     let s = "";
     for (let i = 0; i < students.length; i++) {
         s += students[i].name + ": " + students[i].mean + "\n";
-        for (let j = 0; j < students[i].ue.length; j++) {
-            s += "\t" + students[i].ue[j].name + ": " + (students[i].ue[j].mean * 20) + "\n";
-            for (let k = 0; k < students[i].ue[j].courses.length; k++) {
-                s += "\t\t" + students[i].ue[j].courses[k].name + ": " + students[i].ue[j].courses[k].points + "\n";
-            }
-        }
-        s += "\n";
     }
     return s;
+}
+
+export function getClassMean(students: StudentAnalytics[]): number {
+    let mean = 0;
+    for (let i = 0; i < students.length; i++) {
+        mean += students[i].mean;
+    }
+    return mean / students.length;
+}
+
+export function getClassMedian(students: StudentAnalytics[]): number {
+    students.sort((a: StudentAnalytics, b: StudentAnalytics) => { return b.mean - a.mean; });
+    return students[Math.floor(students.length / 2)].mean;
 }
