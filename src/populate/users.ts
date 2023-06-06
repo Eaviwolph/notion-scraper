@@ -74,7 +74,7 @@ export async function postTeachers(token: string, teachers: Users[]) {
             teachers[i]._id = jsonDbTeacher._id;
             continue;
         }
-        let response = await fetch('http://localhost:8080/teachers', {
+        let response = await fetch(`${process.env.API_HOST}/teachers`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
