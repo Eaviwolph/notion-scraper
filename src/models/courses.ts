@@ -11,6 +11,8 @@ export interface Course {
     semester: string,
     learnings: Learning[];
     teacherNames: String[];
+    ue: string;
+    coefficient: number;
 }
 
 export async function getCourses(notion: Client, learnings: Learning[]): Promise<Course[]> {
@@ -64,13 +66,26 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
                 return firstName + " " + lastName;
             });
         }
+
+        let ue = ""
+        if (result.properties.UE.select) {
+            ue = result.properties.UE.select.name;
+        }
+
+        let coefficient = 0;
+        if (result.properties.Coef.number) {
+            coefficient = result.properties.Coef.number;
+        }
+
         let course: Course = {
             id: result.id.replace(/-/g, ""),
             name: name.trim().replace("’", "'"),
             icon: icon,
             semester: semester,
             learnings: learningsList,
-            teacherNames: teacherNames
+            teacherNames: teacherNames,
+            ue: ue,
+            coefficient: coefficient
         };
         courses.push(course);
     });
