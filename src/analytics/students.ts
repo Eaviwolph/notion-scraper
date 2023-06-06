@@ -115,3 +115,12 @@ export function getClassMedian(students: StudentAnalytics[]): number {
     students.sort((a: StudentAnalytics, b: StudentAnalytics) => { return b.mean - a.mean; });
     return students[Math.floor(students.length / 2)].mean;
 }
+
+export function getStandardDeviation(students: StudentAnalytics[]): number {
+    let mean = getClassMean(students);
+    let sum = 0;
+    for (let i = 0; i < students.length; i++) {
+        sum += Math.pow(students[i].mean - mean, 2);
+    }
+    return Math.sqrt(sum / students.length);
+}

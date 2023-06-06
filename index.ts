@@ -12,7 +12,7 @@ import { postCourses } from "./src/populate/course";
 import { postProofs } from "./src/populate/proofs";
 import { Competence, getCompetences } from "./src/models/competences";
 import { postCompetences } from "./src/populate/competences";
-import { getClassMean, getClassMedian, getMean, populateAnalytics } from "./src/analytics/students";
+import { getClassMean, getClassMedian, getMean, getStandardDeviation, populateAnalytics } from "./src/analytics/students";
 
 require('dotenv').config();
 
@@ -95,6 +95,7 @@ async function analitics() {
     fs.writeFileSync('~dev/studentsAnalytics.json', getMean(studentsAnalytics));
     console.log("Class mean: " + getClassMean(studentsAnalytics));
     console.log("Class median: " + getClassMedian(studentsAnalytics));
+    console.log("Standard deviation: " + getStandardDeviation(studentsAnalytics));
 }
 
 if (!fs.existsSync('~dev')) {
