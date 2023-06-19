@@ -9,6 +9,24 @@ export type StudentAnalytics = {
     mean: number;
 }
 
+export type ClassAnalytics = {
+    students: {
+        name: string,
+        mean: number,
+        ue: {
+            name: string,
+            mean: number
+            courses: {
+                name: string,
+                mean: number
+            }[],
+        }[],
+    }[],
+    mean: number,
+    median: number,
+    standardDeviation: number
+}
+
 export function populateAnalytics(courses: Course[], studentsUsers: Users[]): StudentAnalytics[] {
     let students: StudentAnalytics[] = [];
     for (let i = 0; i < studentsUsers.length; i++) {
@@ -94,11 +112,22 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
     return students;
 }
 
-export function getMean(students: StudentAnalytics[]): string {
+export function getMean(students: StudentAnalytics[], withUE: boolean, withCourse: boolean): string {
     students.sort((a: StudentAnalytics, b: StudentAnalytics) => { return b.mean - a.mean; });
     let s = "";
+
     for (let i = 0; i < students.length; i++) {
         s += students[i].name + ": " + students[i].mean + "\n";
+        if (withUE) {
+            for (let j = 0; j < students[i].ue.length; j++) {
+                s += "\t" + students[i].ue[j].name + ": " + students[i].ue[j].mean + "\n";
+                if (withCourse) {
+                    for (let k = 0; k < students[i].ue[j].courses.length; k++) {
+                        s += "\t\t" + students[i].ue[j].courses[k].name + ": " + students[i].ue[j].courses[k].points + "\n";
+                    }
+                }
+            }
+        }
     }
     return s;
 }
@@ -123,4 +152,34 @@ export function getStandardDeviation(students: StudentAnalytics[]): number {
         sum += Math.pow(students[i].mean - mean, 2);
     }
     return Math.sqrt(sum / students.length);
+}
+
+export function getClassAnalytics(students: StudentAnalytics[]): ClassAnalytics {
+    let mean = getClassMean(students);
+    let median = getClassMedian(students);
+    let standardDeviation = getStandardDeviation(students);
+
+    return {
+        students: students.map((student: StudentAnalytics) => {
+            return {
+                name: student.name,
+                mean: student.mean,
+                ue: student.ue.map((ue: UeAnalytics) => {
+                    return {
+                        name: ue.name,
+                        mean: ue.mean,
+                        courses: ue.courses.map((course: { name: string; points: number; }) => {
+                            return {
+                                name: course.name,
+                                mean: course.points
+                            };
+                        })
+                    };
+                })
+            };
+        }),
+        mean,
+        median,
+        standardDeviation
+    };
 }

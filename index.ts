@@ -3,6 +3,7 @@ import { Learning, getLearnings, populateWithProofs } from "./src/models/learnin
 import { Proof, getProofs } from "./src/models/proofs";
 import { Users, getUsers } from "./src/models/users";
 import { Client } from "@notionhq/client";
+import express from 'express';
 
 import * as fs from 'fs';
 import { postStudents, postTeachers } from "./src/populate/users";
@@ -12,7 +13,7 @@ import { postCourses } from "./src/populate/course";
 import { postProofs } from "./src/populate/proofs";
 import { Competence, getCompetences } from "./src/models/competences";
 import { postCompetences } from "./src/populate/competences";
-import { getClassMean, getClassMedian, getMean, getStandardDeviation, populateAnalytics } from "./src/analytics/students";
+import { getClassAnalytics, getClassMean, getClassMedian, getMean, getStandardDeviation, populateAnalytics } from "./src/analytics/students";
 
 require('dotenv').config();
 
@@ -92,7 +93,7 @@ async function populateWithData() {
 async function analitics() {
     let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
     let studentsAnalytics = populateAnalytics(courses, students);
-    fs.writeFileSync('~dev/studentsAnalytics.json', getMean(studentsAnalytics));
+    fs.writeFileSync('~dev/studentsAnalytics.json', getMean(studentsAnalytics, false, false));
     console.log("Class mean: " + getClassMean(studentsAnalytics));
     console.log("Class median: " + getClassMedian(studentsAnalytics));
     console.log("Standard deviation: " + getStandardDeviation(studentsAnalytics));
@@ -102,4 +103,62 @@ if (!fs.existsSync('~dev')) {
     fs.mkdirSync('~dev');
 }
 
-analitics();
+async function refresh() {
+    while (true) {
+        console.log("Refreshing");
+        let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
+        let studentsAnalytics = populateAnalytics(courses, students);
+        fs.writeFileSync('~dev/classAnalytics.json', JSON.stringify(getClassAnalytics(studentsAnalytics), null, 2));
+        console.log("Class mean: " + getClassMean(studentsAnalytics));
+        // Wait 2 minutes
+        await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 2));
+    }
+}
+
+refresh();
+
+const app = express();
+const port = 9999;
+
+app.get('/mean', async (req, res) => {
+    let classAnalytics = JSON.parse(fs.readFileSync('~dev/classAnalytics.json', 'utf8'));
+
+    let html = `<html>
+    <head>
+        <title>Analytics</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>`;
+    html += `<body>
+        <p class="topInfo">Class mean: ${getClassMean(classAnalytics.students)}</p>
+        <p class="topInfo">Class median: ${getClassMedian(classAnalytics.students)}</p>
+        <p class="topInfo">Standard deviation: ${getStandardDeviation(classAnalytics.students)}</p>`;
+
+    for (let i = 0; i < classAnalytics.students.length; i++) {
+        html += `<p class="studentInfo">${classAnalytics.students[i].name}: ${classAnalytics.students[i].mean}</p>`;
+        for (let j = 0; j < classAnalytics.students[i].ue.length; j++) {
+            html += `<p class="ueInfo">${classAnalytics.students[i].ue[j].name}: ${classAnalytics.students[i].ue[j].mean * 20}</p>`;
+            for (let k = 0; k < classAnalytics.students[i].ue[j].courses.length; k++) {
+                html += `<p class="courseInfo">${classAnalytics.students[i].ue[j].courses[k].name}: ${classAnalytics.students[i].ue[j].courses[k].mean}</p>`;
+            }
+        }
+    }
+    html += `</body>
+    </html>`;
+
+    res.send(html);
+});
+
+app.get('/static/*', async (req, res) => {
+    console.log(req.path);
+    try {
+        let file = fs.readFileSync("./src" + req.path, 'utf8');
+        res.send(file);
+    } catch (error) {
+        console.error(error);
+        res.send("Error");
+    }
+});
+
+app.listen(port, () => {
+
+});
