@@ -110,8 +110,8 @@ async function refresh() {
         let studentsAnalytics = populateAnalytics(courses, students);
         fs.writeFileSync('~dev/classAnalytics.json', JSON.stringify(getClassAnalytics(studentsAnalytics), null, 2));
         console.log("Class mean: " + getClassMean(studentsAnalytics));
-        // Wait 2 minutes
-        await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 2));
+
+        await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 5));
     }
 }
 
@@ -141,7 +141,21 @@ app.get('/', async (req, res) => {
             <p class="topInfo">Ecart type : ${getStandardDeviation(classAnalytics.students)}</p>
         </div>`;
 
-        
+
+    classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
+        return a.name.localeCompare(b.name);
+    });
+
+    if (req.query.sort === "mean") {
+        classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
+            return b.mean - a.mean;
+        });
+    } else if (req.query.sort === "name") {
+        classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
+            return a.name.localeCompare(b.name);
+        });
+    }
+
     html += "<div id=\"students\">\n"
     for (let i = 0; i < classAnalytics.students.length; i++) {
         html += `<p class="studentInfo">${classAnalytics.students[i].name} : ${classAnalytics.students[i].mean}</p>`;
