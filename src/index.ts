@@ -127,7 +127,6 @@ app.get('/', async (req, res) => {
     <head>
         <title>Analytics</title>
         <link rel="stylesheet" href="/static/style.css">
-        <script src="/static/script.js"></script>
     </head>`;
     html += `<body>
         <div id="topBar">
