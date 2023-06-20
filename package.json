@@ -9,7 +9,7 @@
     "outDir": "./dist"
   },
   "scripts": {
-    "start": "yarn ts-node ./index.ts"
+    "start": "yarn ts-node ./src/index.ts"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.5",

@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+}
+
+#topBar {
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #cacaca;
+    position: fixed ;
+    width: 100%;
+}
+
+.topHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    margin: 20px;
+    text-decoration: none;
+
+    color: black;
+    background-color: #e0e0e0;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+#topInfoBar {
+    padding-top: 100px;
+    padding-bottom: 20px;
+    background-color: #e0e0e0;
+}
+
+.topInfo {
+    margin-left: 20px;
+    font-size: 15px;
+}
+
+#students {
+    margin-left: 20px;
+
+}
+
+.studentInfo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 500;
+    border-top: 5px solid #e6e6e6;
+    padding-top: 20px;
+    margin-top: 0px;
+}
+
+.ueInfo {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    border-bottom: 1px solid #e6e6e6;
+    margin-left: 50px;
+}
+
+.courseInfo {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-left: 100px;
+}

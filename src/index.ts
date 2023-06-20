@@ -1,19 +1,19 @@
-import { Course, getCourses, getMeanByCourse } from "./src/models/courses";
-import { Learning, getLearnings, populateWithProofs } from "./src/models/learnings";
-import { Proof, getProofs } from "./src/models/proofs";
-import { Users, getUsers } from "./src/models/users";
+import { Course, getCourses, getMeanByCourse } from "./models/courses";
+import { Learning, getLearnings, populateWithProofs } from "./models/learnings";
+import { Proof, getProofs } from "./models/proofs";
+import { Users, getUsers } from "./models/users";
 import { Client } from "@notionhq/client";
 import express from 'express';
 
 import * as fs from 'fs';
-import { postStudents, postTeachers } from "./src/populate/users";
-import { getToken } from "./src/populate/getToken";
-import { postLearnings } from "./src/populate/learnings";
-import { postCourses } from "./src/populate/course";
-import { postProofs } from "./src/populate/proofs";
-import { Competence, getCompetences } from "./src/models/competences";
-import { postCompetences } from "./src/populate/competences";
-import { getClassAnalytics, getClassMean, getClassMedian, getMean, getStandardDeviation, populateAnalytics } from "./src/analytics/students";
+import { postStudents, postTeachers } from "./populate/users";
+import { getToken } from "./populate/getToken";
+import { postLearnings } from "./populate/learnings";
+import { postCourses } from "./populate/course";
+import { postProofs } from "./populate/proofs";
+import { Competence, getCompetences } from "./models/competences";
+import { postCompetences } from "./populate/competences";
+import { getClassAnalytics, getClassMean, getClassMedian, getMean, getStandardDeviation, populateAnalytics } from "./analytics/students";
 
 require('dotenv').config();
 
@@ -120,28 +120,43 @@ refresh();
 const app = express();
 const port = 9999;
 
-app.get('/mean', async (req, res) => {
+app.get('/', async (req, res) => {
     let classAnalytics = JSON.parse(fs.readFileSync('~dev/classAnalytics.json', 'utf8'));
 
     let html = `<html>
     <head>
         <title>Analytics</title>
         <link rel="stylesheet" href="/static/style.css">
+        <script src="/static/script.js"></script>
     </head>`;
     html += `<body>
-        <p class="topInfo">Class mean: ${getClassMean(classAnalytics.students)}</p>
-        <p class="topInfo">Class median: ${getClassMedian(classAnalytics.students)}</p>
-        <p class="topInfo">Standard deviation: ${getStandardDeviation(classAnalytics.students)}</p>`;
+        <div id="topBar">
+            <a class="topHead" href="/">Général</a>
+            <a class="topHead" href="/?ue=true">UE</a>
+            <a class="topHead" href="/?ue=true&courses=true">Course</a>
+        </div>
+        <div id="topInfoBar">
+            <p class="topInfo">Moyenne de la classe : ${getClassMean(classAnalytics.students)}</p>
+            <p class="topInfo">Mediane de la classe : ${getClassMedian(classAnalytics.students)}</p>
+            <p class="topInfo">Ecart type : ${getStandardDeviation(classAnalytics.students)}</p>
+        </div>`;
 
+        
+    html += "<div id=\"students\">\n"
     for (let i = 0; i < classAnalytics.students.length; i++) {
-        html += `<p class="studentInfo">${classAnalytics.students[i].name}: ${classAnalytics.students[i].mean}</p>`;
-        for (let j = 0; j < classAnalytics.students[i].ue.length; j++) {
-            html += `<p class="ueInfo">${classAnalytics.students[i].ue[j].name}: ${classAnalytics.students[i].ue[j].mean * 20}</p>`;
-            for (let k = 0; k < classAnalytics.students[i].ue[j].courses.length; k++) {
-                html += `<p class="courseInfo">${classAnalytics.students[i].ue[j].courses[k].name}: ${classAnalytics.students[i].ue[j].courses[k].mean}</p>`;
+        html += `<p class="studentInfo">${classAnalytics.students[i].name} : ${classAnalytics.students[i].mean}</p>`;
+        if (req.query.ue === "true") {
+            for (let j = 0; j < classAnalytics.students[i].ue.length; j++) {
+                html += `<p class="ueInfo">${classAnalytics.students[i].ue[j].name} : ${classAnalytics.students[i].ue[j].mean * 20}</p>`;
+                if (req.query.courses === "true") {
+                    for (let k = 0; k < classAnalytics.students[i].ue[j].courses.length; k++) {
+                        html += `<p class="courseInfo">${classAnalytics.students[i].ue[j].courses[k].name} : ${classAnalytics.students[i].ue[j].courses[k].mean}</p>`;
+                    }
+                }
             }
         }
     }
+    html += "</div>\n"
     html += `</body>
     </html>`;
 
