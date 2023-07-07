@@ -102,9 +102,6 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
         let studentPoints = 0;
         let studentTotal = 0;
         for (let j = 0; j < students[i].ue.length; j++) {
-            if (students[i].ue[j].name.startsWith("[MCE8]")) {
-                continue;
-            }
             let points = 0;
             let total = 0;
             let coefficient = 0;
@@ -119,8 +116,10 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
             students[i].ue[j].mean = points / total;
             students[i].ue[j].coefficient = coefficient;
 
-            studentPoints += (points / total * 20) * coefficient;
-            studentTotal += 20 * coefficient;
+            if (!students[i].ue[j].name.startsWith("[MCE8]")) {
+                studentPoints += (points / total * 20) * coefficient;
+                studentTotal += 20 * coefficient;
+            }
         }
         if (studentTotal === 0) {
             studentTotal = 1;
