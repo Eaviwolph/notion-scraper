@@ -39,7 +39,7 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
 
     for (let i = 0; i < studentsUsers.length; i++) {
         for (let j = 0; j < courses.length; j++) {
-            if (courses[j].ue === "" || courses[j].semester !== "S8" || courses[j].ue.startsWith("[MCE8]") || courses[j].ue.startsWith("[SG8]")) {
+            if (courses[j].ue === "" || courses[j].semester !== "S8" || courses[j].ue.startsWith("[SG8]") || courses[j].name === "Conferences Technologiques" || courses[j].name === "Droits de propriétés intellectuelles") {
                 continue;
             }
 
@@ -83,6 +83,22 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
     }
 
     for (let i = 0; i < students.length; i++) {
+        // Weird move for Management et Pilotage de projets
+        let MCE8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[MCE8]"));
+        let ITCS8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[ITCS8]"));
+        let MAIN8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[MAIN8]"));
+
+        let MethodologieId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "Méthodologie");
+        let SocioId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "Sociologie des organisations");
+        let ChiffrId = students[i].ue[ITCS8Index].courses.findIndex((course: { name: string; }) => course.name === "Chiffrage de projet");
+
+        let ManagementId = students[i].ue[MCE8Index].courses.findIndex((course: { name: string; }) => course.name === "Management et Pilotage de projets");
+        students[i].ue[MCE8Index].courses[ManagementId].points =
+            (students[i].ue[MAIN8Index].courses[MethodologieId].points
+                + students[i].ue[MAIN8Index].courses[SocioId].points
+                + students[i].ue[ITCS8Index].courses[ChiffrId].points) / 3;
+        // End of weird move
+
         let studentPoints = 0;
         let studentTotal = 0;
         for (let j = 0; j < students[i].ue.length; j++) {
