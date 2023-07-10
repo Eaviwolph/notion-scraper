@@ -54,6 +54,9 @@ export function startServer() {
 
 
         classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
+            return a.name.localeCompare(b.name);
+        });
+        classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
             return b.mean - a.mean;
         });
 
