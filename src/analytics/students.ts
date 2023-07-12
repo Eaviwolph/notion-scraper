@@ -83,20 +83,33 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
     }
 
     for (let i = 0; i < students.length; i++) {
-        // Weird move for Management et Pilotage de projets
+        // Weird move for PFE
         let MCE8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[MCE8]"));
         let ITCS8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[ITCS8]"));
         let MAIN8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[MAIN8]"));
+        let BECO8Index = students[i].ue.findIndex((ue: UeAnalytics) => ue.name.startsWith("[BECO8]"));
 
         let MethodologieId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "Méthodologie");
         let SocioId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "Sociologie des organisations");
         let ChiffrId = students[i].ue[ITCS8Index].courses.findIndex((course: { name: string; }) => course.name === "Chiffrage de projet");
+        let PEId = students[i].ue[BECO8Index].courses.findIndex((course: { name: string; }) => course.name === "Projets d'entreprise");
 
-        let ManagementId = students[i].ue[MCE8Index].courses.findIndex((course: { name: string; }) => course.name === "Management et Pilotage de projets");
-        students[i].ue[MCE8Index].courses[ManagementId].points =
+        let PFEId = students[i].ue[MCE8Index].courses.findIndex((course: { name: string; }) => course.name === "PFE");
+        students[i].ue[MCE8Index].courses[PFEId].points =
             (students[i].ue[MAIN8Index].courses[MethodologieId].points
                 + students[i].ue[MAIN8Index].courses[SocioId].points
-                + students[i].ue[ITCS8Index].courses[ChiffrId].points) / 3;
+                + students[i].ue[BECO8Index].courses[PEId].points
+                + students[i].ue[ITCS8Index].courses[ChiffrId].points) / 4;
+        // End of weird move
+
+        // Weird move for MOOC : Devenir créatif et innovant
+        let UXId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "UX Design");
+        let MDLId = students[i].ue[MAIN8Index].courses.findIndex((course: { name: string; }) => course.name === "Management de l'innovation");
+
+        let MOOCId = students[i].ue[MCE8Index].courses.findIndex((course: { name: string; }) => course.name === "MOOC : Devenir créatif et innovant");
+        students[i].ue[MCE8Index].courses[MOOCId].points =
+            (students[i].ue[MAIN8Index].courses[UXId].points
+                + students[i].ue[MAIN8Index].courses[MDLId].points) / 2;
         // End of weird move
 
         let studentPoints = 0;
