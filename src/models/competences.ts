@@ -9,6 +9,10 @@ export interface Competence {
 export function getCompetences(learnings: Learning[]): Competence[] {
     let allLearningsCompetences: Competence[] = [];
     for (let i = 0; i < learnings.length; i++) {
+        if (learnings[i].competence === undefined || learnings[i].competence === "") {
+            continue;
+        }
+
         if (!allLearningsCompetences.find((c: Competence) => c.name === learnings[i].competence)) {
             allLearningsCompetences.push({
                 name: learnings[i].competence,

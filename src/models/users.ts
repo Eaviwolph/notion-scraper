@@ -25,7 +25,7 @@ export async function getUsers(notion: Client): Promise<Users[]> {
         let student: Users = {
             id: result.id.replace(/-/g, ""),
             name: name,
-            isStudent: result.properties.Triade.select !== null,
+            isStudent: result.properties.Triade.select !== null || name === "Aurelien Isak",
         };
         students.push(student);
     });

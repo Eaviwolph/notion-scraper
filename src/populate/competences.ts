@@ -40,6 +40,7 @@ export async function postCompetences(token: string, competence: Competence[]) {
             competence[i]._id = json._id;
         } else {
             console.log("Competences", json);
+            console.log(competence[i]);
         }
     }
 }

@@ -103,4 +103,4 @@ if (!fs.existsSync('~dev')) {
     fs.mkdirSync('~dev');
 }
 
-startServer();
+populateWithData();

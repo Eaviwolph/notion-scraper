@@ -25,7 +25,7 @@ export async function validateProof(token: string, proof: Proof) {
     }
 }
 
-export async function postChat(token: string, proof: Proof, student: Users) {
+export async function postChat(proof: Proof, student: Users) {
     let studentToken = await getToken(
         student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase() + "@epita.fr",
         student.name.split(" ")[0].toLowerCase() + "." + student.name.split(" ")[1].toLowerCase());
@@ -45,35 +45,36 @@ export async function postChat(token: string, proof: Proof, student: Users) {
         console.log(`Error posting chat on proof ${proof.id}`);
         let json: any = await response.json();
         console.log(json);
+        console.log(proof);
     }
 }
 
 export async function postProof(token: string, proof: Proof, validatedBy: Users) {
-    for (let j = 0; j < proof.students.length; j++) {
-        let obj = {
-            "learnings": proof.learnings.map((learning) => {
-                return learning._id;
-            }),
-            "student": proof.students[j]._id,
-            "validatedBy": validatedBy._id,
-        };
+    let obj = {
+        "learnings": proof.learnings.map((learning) => {
+            return learning._id;
+        }),
+        "students": proof.students.map((student) => {
+            return student._id;
+        }),
+        "validatedBy": validatedBy._id,
+    };
 
-        let response = await fetch(`${process.env.API_HOST}/proofs`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(obj),
-        });
-        let json: any = await response.json();
-        if (json._id !== undefined) {
-            proof._id = json._id;
-            await postChat(token, proof, proof.students[j]);
-            validateProof(token, proof);
-        } else {
-            console.log("Proofs", json);
-        }
+    let response = await fetch(`${process.env.API_HOST}/proofs`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(obj),
+    });
+    let json: any = await response.json();
+    if (json._id !== undefined) {
+        proof._id = json._id;
+        await postChat(proof, proof.students[0]);
+        validateProof(token, proof);
+    } else {
+        console.log("Proofs", json);
     }
 }
 
