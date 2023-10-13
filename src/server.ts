@@ -3,26 +3,34 @@ import * as fs from 'fs';
 import { getAllAndPopulate } from '.';
 import { getClassAnalytics, getClassMean, getClassMedian, getStandardDeviation, populateAnalytics } from './analytics/students';
 
+var Refreshing = false;
 
-async function refresh() {
-    while (true) {
+async function refresh(loop: boolean = true) {
+    if (Refreshing) {
+        return;
+    }
+    Refreshing = true;
+    do {
         console.log("Refreshing");
         let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
         let studentsAnalytics = populateAnalytics(courses, students);
         fs.writeFileSync('~dev/classAnalytics.json', JSON.stringify(getClassAnalytics(studentsAnalytics), null, 2));
         console.log("Class mean: " + getClassMean(studentsAnalytics));
 
-        await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 5));
-    }
+        Refreshing = false;
+    } while (loop);
 }
 
 export function startServer() {
     const app = express();
 
-    refresh();
+    refresh(false);
     const port = 9999;
 
     app.get('/', async (req, res) => {
+        if (req.query.refresh === "true") {
+            refresh(false);
+        }
         let classAnalytics = JSON.parse(fs.readFileSync('~dev/classAnalytics.json', 'utf8'));
 
         let html = `<html>
@@ -35,16 +43,21 @@ export function startServer() {
                 <a class="topHead" href="/">Général</a>
                 <a class="topHead" href="/?ue=true">UE</a>
                 <a class="topHead" href="/?ue=true&courses=true">Course</a>
+                <a class="topHead" href="/refresh">Refresh</a>
             </div>
             <div id="topInfoBar">
                 <p class="topInfo">Moyenne de la classe : ${getClassMean(classAnalytics.students)}</p>
                 <p class="topInfo">Mediane de la classe : ${getClassMedian(classAnalytics.students)}</p>
                 <p class="topInfo">Ecart type : ${getStandardDeviation(classAnalytics.students)}</p>
+                <p class="topInfo">Last refresh : ${fs.statSync('~dev/classAnalytics.json').mtime.toLocaleString() + (Refreshing ? " (Refreshing)" : "")}</p>
             </div>`;
 
 
         classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
             return a.name.localeCompare(b.name);
+        });
+        classAnalytics.students = classAnalytics.students.sort((a: any, b: any) => {
+            return b.mean - a.mean;
         });
 
         if (req.query.sort === "mean") {
@@ -76,6 +89,11 @@ export function startServer() {
         </html>`;
 
         res.send(html);
+    });
+
+    app.get('/refresh', async (req, res) => {
+        refresh(false);
+        res.redirect("/");
     });
 
     app.get('/static/*', async (req, res) => {
