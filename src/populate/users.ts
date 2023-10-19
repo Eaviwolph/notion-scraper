@@ -85,7 +85,7 @@ export async function postTeachers(token: string, teachers: Users[]) {
                 "lastName": teachers[i].name.split(" ")[1],
                 "email": teachers[i].name.split(" ")[0].toLowerCase() + "." + teachers[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
                 "password": teachers[i].name.split(" ")[0].toLowerCase() + "." + teachers[i].name.split(" ")[1].toLowerCase() + "38",
-                "isAdmin": (teachers[i].name === "Michel Sasson" || teachers[i].name === "Helene Ouyang"),
+                "adminLevel": (teachers[i].name === "Michel Sasson" || teachers[i].name === "Helene Ouyang") ? 1 : 0,
             }),
         });
 
