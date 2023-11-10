@@ -4,6 +4,7 @@ import { Users } from "../models/users";
 import { UeAnalytics } from "./ue";
 
 export type StudentAnalytics = {
+    notionId?: string;
     name: string;
     ue: UeAnalytics[];
     mean: number;
@@ -31,6 +32,7 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
     let students: StudentAnalytics[] = [];
     for (let i = 0; i < studentsUsers.length; i++) {
         students.push({
+            notionId: studentsUsers[i].id,
             name: studentsUsers[i].name,
             ue: [],
             mean: 0

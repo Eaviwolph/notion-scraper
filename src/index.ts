@@ -2,6 +2,7 @@ import { Client } from "@notionhq/client";
 
 import * as fs from 'fs';
 import { startServer } from "./commands/server";
+import { notionDisplay } from "./commands/notionDisplay";
 
 require('dotenv').config();
 
@@ -11,4 +12,8 @@ if (!fs.existsSync('~dev')) {
     fs.mkdirSync('~dev');
 }
 
-startServer(notion);
+if (process.env.COMMAND === "server") {
+    startServer(notion);
+} else if (process.env.COMMAND === "notionDisplay") {
+    notionDisplay(notion);
+}
