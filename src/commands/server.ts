@@ -1,18 +1,19 @@
 import express from 'express';
 import * as fs from 'fs';
-import { getAllAndPopulate } from '.';
-import { getClassAnalytics, getClassMean, getClassMedian, getStandardDeviation, populateAnalytics } from './analytics/students';
+import { getClassAnalytics, getClassMean, getClassMedian, getStandardDeviation, populateAnalytics } from '../analytics/students';
+import { getAll } from './getAll';
+import { Client } from '@notionhq/client';
 
 var Refreshing = false;
 
-async function refresh(loop: boolean = true) {
+async function refresh(loop: boolean = true, notion: Client) {
     if (Refreshing) {
         return;
     }
     Refreshing = true;
     do {
         console.log("Refreshing");
-        let { students, teachers, proofs, learnings, courses, competences } = await getAllAndPopulate();
+        let { students, teachers, proofs, learnings, courses, competences } = await getAll(notion);
         let studentsAnalytics = populateAnalytics(courses, students);
         fs.writeFileSync('~dev/classAnalytics.json', JSON.stringify(getClassAnalytics(studentsAnalytics), null, 2));
         console.log("Class mean: " + getClassMean(studentsAnalytics));
@@ -21,15 +22,15 @@ async function refresh(loop: boolean = true) {
     } while (loop);
 }
 
-export function startServer() {
+export function startServer(notion: Client) {
     const app = express();
 
-    refresh(false);
+    refresh(false, notion);
     const port = 9999;
 
     app.get('/', async (req, res) => {
         if (req.query.refresh === "true") {
-            refresh(false);
+            refresh(false, notion);
         }
         let classAnalytics = JSON.parse(fs.readFileSync('~dev/classAnalytics.json', 'utf8'));
 
@@ -92,7 +93,7 @@ export function startServer() {
     });
 
     app.get('/refresh', async (req, res) => {
-        refresh(false);
+        refresh(false, notion);
         res.redirect("/");
     });
 

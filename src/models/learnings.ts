@@ -130,6 +130,9 @@ export function populateWithProofs(learnings: Learning[], proofs: Proof[]) {
         for (let j = 0; j < proofs.length; j++) {
             if (proofs[j].learningID === learnings[i].id) {
                 for (let k = 0; k < proofs[j].students.length; k++) {
+                    if (proofs[j].students[k] === undefined) {
+                        console.log(proofs[j]);
+                    }
                     if (!learnings[i].studentsValidating.find((s: Users) => s.id === proofs[j].students[k].id)) {
                         learnings[i].studentsValidating.push(proofs[j].students[k]);
                     }

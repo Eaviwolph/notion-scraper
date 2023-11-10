@@ -95,9 +95,6 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
 export function getMeanByCourse(courses: Course[], students: Users[]) {
     let meanByCourse: any = {};
     courses.forEach((course: Course) => {
-        if (course.semester !== "S8") {
-            return;
-        }
         meanByCourse[course.name] = {};
         students.forEach((student: Users) => {
             let mean = 0;

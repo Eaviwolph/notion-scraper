@@ -39,7 +39,7 @@ export function populateAnalytics(courses: Course[], studentsUsers: Users[]): St
 
     for (let i = 0; i < studentsUsers.length; i++) {
         for (let j = 0; j < courses.length; j++) {
-            if (courses[j].ue === "" || courses[j].semester !== "S8" || courses[j].ue.startsWith("[SG8]") || courses[j].name === "Conferences Technologiques" || courses[j].name === "Droits de propriétés intellectuelles") {
+            if (courses[j].ue === "" || courses[j].ue.startsWith("[SG8]") || courses[j].name === "Conferences Technologiques" || courses[j].name === "Droits de propriétés intellectuelles") {
                 continue;
             }
 
