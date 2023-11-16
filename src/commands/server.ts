@@ -1,6 +1,6 @@
 import express from 'express';
 import * as fs from 'fs';
-import { getClassAnalytics, getClassMean, getClassMedian, getStandardDeviation, populateAnalytics } from '../analytics/students';
+import { ClassAnalytics, getClassAnalytics, getClassMean, getClassMedian, getStandardDeviation, populateAnalytics } from '../analytics/students';
 import { getAll } from './getAll';
 import { Client } from '@notionhq/client';
 
@@ -75,11 +75,14 @@ export function startServer(notion: Client) {
         for (let i = 0; i < classAnalytics.students.length; i++) {
             html += `<p class="studentInfo">${classAnalytics.students[i].name} : ${classAnalytics.students[i].mean}</p>`;
             if (req.query.ue === "true") {
-                for (let j = 0; j < classAnalytics.students[i].ue.length; j++) {
-                    html += `<p class="ueInfo">${classAnalytics.students[i].ue[j].name} : ${classAnalytics.students[i].ue[j].mean * 20}</p>`;
+                for (let s = 0; s < classAnalytics.students[i].semester.length; s++) {
+                    html += `<p class="semesterInfo">${classAnalytics.students[i].semester[s].name} : ${classAnalytics.students[i].semester[s].mean}</p>`;
                     if (req.query.courses === "true") {
-                        for (let k = 0; k < classAnalytics.students[i].ue[j].courses.length; k++) {
-                            html += `<p class="courseInfo">${classAnalytics.students[i].ue[j].courses[k].name} : ${classAnalytics.students[i].ue[j].courses[k].mean}</p>`;
+                        for (let u = 0; u < classAnalytics.students[i].semester[s].ue.length; u++) {
+                            html += `<p class="ueInfo">${classAnalytics.students[i].semester[s].ue[u].name} : ${classAnalytics.students[i].semester[s].ue[u].mean}</p>`;
+                            for (let c = 0; c < classAnalytics.students[i].semester[s].ue[u].courses.length; c++) {
+                                html += `<p class="courseInfo">${classAnalytics.students[i].semester[s].ue[u].courses[c].name} : ${classAnalytics.students[i].semester[s].ue[u].courses[c].mean}</p>`;
+                            }
                         }
                     }
                 }

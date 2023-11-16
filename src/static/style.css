@@ -53,19 +53,28 @@ body {
     border-top: 5px solid #e6e6e6;
     padding-top: 20px;
     margin-top: 0px;
+    font-weight: bold;
+}
+
+.semesterInfo {
+    display: flex;
+    align-items: center;
+    font-size: 19px;
+    border-bottom: 1px solid #e6e6e6;
+    margin-left: 50px;
 }
 
 .ueInfo {
     display: flex;
     align-items: center;
-    font-size: 18px;
+    font-size: 17px;
     border-bottom: 1px solid #e6e6e6;
-    margin-left: 50px;
+    margin-left: 100px;
 }
 
 .courseInfo {
     display: flex;
     align-items: center;
     font-size: 16px;
-    margin-left: 100px;
+    margin-left: 150px;
 }
