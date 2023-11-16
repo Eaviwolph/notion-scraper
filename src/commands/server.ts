@@ -42,8 +42,9 @@ export function startServer(notion: Client) {
         html += `<body>
             <div id="topBar">
                 <a class="topHead" href="/">Général</a>
-                <a class="topHead" href="/?ue=true">UE</a>
-                <a class="topHead" href="/?ue=true&courses=true">Course</a>
+                <a class="topHead" href="/?semester=true">Semester</a>
+                <a class="topHead" href="/?semester=true&ue=true">UE</a>
+                <a class="topHead" href="/?semester=true&ue=true&courses=true">Course</a>
                 <a class="topHead" href="/refresh">Refresh</a>
             </div>
             <div id="topInfoBar">
@@ -74,14 +75,16 @@ export function startServer(notion: Client) {
         html += "<div id=\"students\">\n"
         for (let i = 0; i < classAnalytics.students.length; i++) {
             html += `<p class="studentInfo">${classAnalytics.students[i].name} : ${classAnalytics.students[i].mean}</p>`;
-            if (req.query.ue === "true") {
+            if (req.query.semester === "true") {
                 for (let s = 0; s < classAnalytics.students[i].semester.length; s++) {
                     html += `<p class="semesterInfo">${classAnalytics.students[i].semester[s].name} : ${classAnalytics.students[i].semester[s].mean}</p>`;
-                    if (req.query.courses === "true") {
+                    if (req.query.ue === "true") {
                         for (let u = 0; u < classAnalytics.students[i].semester[s].ue.length; u++) {
                             html += `<p class="ueInfo">${classAnalytics.students[i].semester[s].ue[u].name} : ${classAnalytics.students[i].semester[s].ue[u].mean}</p>`;
-                            for (let c = 0; c < classAnalytics.students[i].semester[s].ue[u].courses.length; c++) {
-                                html += `<p class="courseInfo">${classAnalytics.students[i].semester[s].ue[u].courses[c].name} : ${classAnalytics.students[i].semester[s].ue[u].courses[c].mean}</p>`;
+                            if (req.query.courses === "true") {
+                                for (let c = 0; c < classAnalytics.students[i].semester[s].ue[u].courses.length; c++) {
+                                    html += `<p class="courseInfo">${classAnalytics.students[i].semester[s].ue[u].courses[c].name} : ${classAnalytics.students[i].semester[s].ue[u].courses[c].mean}</p>`;
+                                }
                             }
                         }
                     }

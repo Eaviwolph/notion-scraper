@@ -183,12 +183,12 @@ export function getMean(students: StudentAnalytics[], withUE: boolean, withCours
 
     for (let i = 0; i < students.length; i++) {
         s += students[i].name + ": " + students[i].mean + "\n";
-        if (withUE) {
-            for (let j = 0; j < students[i].semester.length; j++) {
-                s += "\t" + students[i].semester[j].name + ": " + students[i].semester[j].mean + "\n";
-                if (withCourse) {
-                    for (let k = 0; k < students[i].semester[j].ue.length; k++) {
-                        s += "\t\t" + students[i].semester[j].ue[k].name + ": " + students[i].semester[j].ue[k].mean + "\n";
+        for (let j = 0; j < students[i].semester.length; j++) {
+            s += "\t" + students[i].semester[j].name + ": " + students[i].semester[j].mean + "\n";
+            if (withUE) {
+                for (let k = 0; k < students[i].semester[j].ue.length; k++) {
+                    s += "\t\t" + students[i].semester[j].ue[k].name + ": " + students[i].semester[j].ue[k].mean + "\n";
+                    if (withCourse) {
                         for (let l = 0; l < students[i].semester[j].ue[k].courses.length; l++) {
                             s += "\t\t\t" + students[i].semester[j].ue[k].courses[l].name + ": " + students[i].semester[j].ue[k].courses[l].points + "\n";
                         }
