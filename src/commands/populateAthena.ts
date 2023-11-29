@@ -9,11 +9,11 @@ import { postProofs } from "../populate/proofs";
 import { postCompetences } from "../populate/competences";
 import * as fs from 'fs';
 
-export async function populateWithData(notion: Client) {
-    let { students, teachers, proofs, learnings, courses, competences } = await getAll(notion);
-
+export async function populateAthena(notion: Client) {
     let token = await getToken("admin.admin", "admin");
     console.log("Token retrieved");
+
+    let { students, teachers, proofs, learnings, courses, competences } = await getAll(notion);
 
     await postStudents(token, students);
     fs.writeFileSync('~dev/afterStudents.json', JSON.stringify(students, null, 2));
