@@ -21,7 +21,7 @@ async function addSemesterTable(notion: Client, notionId: string, student: Stude
                 type: "table",
                 object: "block",
                 table: {
-                    table_width: student.semester.length + 2,
+                    table_width: student.semester.length + 3,
                     has_column_header: true,
                     has_row_header: true,
                     children: children,
@@ -83,6 +83,19 @@ async function addSemesterTable(notion: Client, notionId: string, student: Stude
         }
         ]);
     }
+
+    response.children[0].table.children[0].table_row.cells.push([{
+        text: {
+            content: "Moyenne générale",
+        }
+    }]);
+
+    response.children[0].table.children[1].table_row.cells.push([{
+        text: {
+            // Date format 24/12/2020 12:00:00
+            content: (Math.round(student.mean * 100) / 100).toString(),
+        }
+    }]);
 
     response.children[0].table.children[0].table_row.cells.push([{
         text: {

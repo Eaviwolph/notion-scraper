@@ -12,7 +12,7 @@
     "start": "yarn ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.5",
+    "@notionhq/client": "2.2.5",
     "@types/node": "^20.1.7",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
