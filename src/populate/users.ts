@@ -41,8 +41,8 @@ export async function postStudents(token: string, students: Users[]) {
                 "lastName": students[i].name.split(" ")[1],
                 "email": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase() + "@epita.fr",
                 "password": students[i].name.split(" ")[0].toLowerCase() + "." + students[i].name.split(" ")[1].toLowerCase(),
-                "promo": "2024",
-                "major": "ICE",
+                "promo": students[i].promo,
+                "major": students[i].major,
             }),
         });
 

@@ -67,7 +67,7 @@ export async function getCourses(notion: Client, learnings: Learning[]): Promise
             });
         }
 
-        let ue = ""
+        let ue = "";
         if (result.properties.UE.select) {
             ue = result.properties.UE.select.name;
         }

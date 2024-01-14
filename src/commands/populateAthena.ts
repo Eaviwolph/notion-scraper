@@ -8,12 +8,27 @@ import { postCourses } from "../populate/course";
 import { postProofs } from "../populate/proofs";
 import { postCompetences } from "../populate/competences";
 import * as fs from 'fs';
+import { postMajors } from "../populate/majors";
+import { postPromos } from "../populate/promos";
+import { postSemesters } from "../populate/semesters";
 
 export async function populateAthena(notion: Client) {
     let token = await getToken("admin.admin", "admin");
     console.log("Token retrieved");
 
     let { students, teachers, proofs, learnings, courses, competences } = await getAll(notion);
+
+    await postMajors(token, students);
+    fs.writeFileSync('~dev/afterMajors.json', JSON.stringify(students, null, 2));
+    console.log("Majors posted");
+
+    await postPromos(token, students);
+    fs.writeFileSync('~dev/afterPromos.json', JSON.stringify(students, null, 2));
+    console.log("Promos posted");
+
+    await postSemesters(token, courses);
+    fs.writeFileSync('~dev/afterSemesters.json', JSON.stringify(courses, null, 2));
+    console.log("Semesters posted");
 
     await postStudents(token, students);
     fs.writeFileSync('~dev/afterStudents.json', JSON.stringify(students, null, 2));

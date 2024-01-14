@@ -6,6 +6,8 @@ export interface Users {
     id: string;
     name: string;
     isStudent: boolean;
+    promo?: string;
+    major?: string;
 }
 
 export async function getUsers(notion: Client): Promise<Users[]> {
